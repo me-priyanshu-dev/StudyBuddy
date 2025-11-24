@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StudyBuddy AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Add Google Fonts: Kalam (Handwritten) and Quicksand (Cute UI) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Patrick+Hand&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              hand: ['"Kalam"', 'cursive'],
+              cute: ['"Quicksand"', 'sans-serif'],
+              sans: ['"Quicksand"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            },
+            colors: {
+              primary: {
+                50: '#f0f9ff',
+                100: '#e0f2fe',
+                200: '#bae6fd',
+                300: '#7dd3fc',
+                400: '#38bdf8',
+                500: '#0ea5e9',
+                600: '#0284c7',
+                700: '#0369a1',
+                800: '#075985',
+                900: '#0c4a6e',
+              },
+              cute: {
+                pink: '#fce7f3',
+                pinkBorder: '#f9a8d4',
+                purple: '#f3e8ff',
+                purpleBorder: '#d8b4fe',
+                blue: '#e0f2fe',
+                blueBorder: '#7dd3fc',
+                green: '#dcfce7',
+                greenBorder: '#86efac',
+                yellow: '#fef9c3',
+                yellowBorder: '#fde047',
+              },
+              paper: {
+                lines: '#cbd5e1',
+                bg: '#fdfbf7', 
+              },
+              marker: {
+                yellow: '#fef08a',
+                pink: '#fbcfe8',
+                green: '#bbf7d0',
+                blue: '#bfdbfe'
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        font-family: 'Quicksand', sans-serif;
+      }
+      /* Custom scrollbar for cleaner look */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1; 
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8; 
+      }
+      .mermaid svg {
+        max-width: 100%;
+        height: auto;
+      }
+      /* Notebook Lines Effect */
+      .notebook-paper {
+        background-color: #fdfbf7;
+        background-image: linear-gradient(#e2e8f0 1px, transparent 1px);
+        background-size: 100% 2rem;
+        line-height: 2rem;
+      }
+      /* Cute Dot Pattern Background */
+      .bg-dots {
+        background-color: #f8fafc;
+        background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+        background-size: 20px 20px;
+      }
+      /* Bubbly Button */
+      .btn-bubbly {
+        transition: transform 0.1s ease, box-shadow 0.1s ease;
+      }
+      .btn-bubbly:active {
+        transform: translateY(2px);
+        box-shadow: none !important;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "d3": "https://aistudiocdn.com/d3@^7.9.0"
+  }
+}
+</script>
+</head>
+  <body class="bg-dots text-slate-800 antialiased overflow-hidden selection:bg-pink-200 selection:text-pink-900">
+    <div id="root"></div>
+  </body>
+</html>

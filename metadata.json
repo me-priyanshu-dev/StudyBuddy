@@ -1,0 +1,8 @@
+{
+  "name": "StudyBuddy AI",
+  "description": "An all-in-one AI study companion helping students generate notes, create mind maps, and solve complex problems.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
