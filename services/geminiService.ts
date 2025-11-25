@@ -2,6 +2,32 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { MindMapNode, ModelType, LearningPath, UserProfile } from "../types";
 
+// Helper: robustly extract JSON from AI response text
+const cleanAndParseJSON = (text: string): any => {
+  if (!text) throw new Error("Empty response from AI");
+
+  // Remove markdown code blocks first
+  let cleanText = text.replace(/```json/g, '').replace(/```/g, '');
+
+  // Find the first '{' and the last '}'
+  const firstBrace = cleanText.indexOf('{');
+  const lastBrace = cleanText.lastIndexOf('}');
+
+  if (firstBrace === -1 || lastBrace === -1) {
+    throw new Error("Response did not contain valid JSON structure");
+  }
+
+  // Extract just the JSON part
+  const jsonStr = cleanText.substring(firstBrace, lastBrace + 1);
+  
+  try {
+    return JSON.parse(jsonStr);
+  } catch (e) {
+    console.error("JSON Parse Error on string:", jsonStr);
+    throw new Error("Failed to parse AI response as JSON");
+  }
+};
+
 /**
  * Generate study notes from text or a file (PDF/Image)
  */
@@ -94,13 +120,7 @@ export const generateMindMapData = async (topic: string): Promise<MindMapNode> =
       }
     });
 
-    let text = response.text || "";
-    // CLEANUP: Aggressively remove markdown code blocks
-    text = text.replace(/```json/g, '').replace(/```/g, '').trim();
-
-    if (!text) throw new Error("Empty response");
-    
-    return JSON.parse(text) as MindMapNode;
+    return cleanAndParseJSON(response.text || "") as MindMapNode;
   } catch (error: any) {
     console.error("Gemini MindMap Error:", error);
     throw new Error(error.message || "Failed to generate mind map.");
@@ -132,7 +152,6 @@ export const chatWithTutor = async (
     : "You are a patient, knowledgeable, and encouraging tutor. Explain concepts clearly.";
 
   try {
-    // Switched to FAST model for better reliability and speed in chat
     const chat = ai.chats.create({
       model: ModelType.FAST, 
       history: history,
@@ -184,35 +203,28 @@ export const generateLearningPath = async (topic: string, level: string, userPro
       Make the Step Titles sound like "Game Levels" or "Adventures".
       Example: Instead of "Introduction", use "Level 1: The Beginning" or "Mission Start".
       
-      Return JSON format.
+      IMPORTANT: Return ONLY valid JSON.
+      JSON Structure:
+      {
+        "topic": "${topic}",
+        "steps": [
+          {
+             "title": "Level 1: Basics",
+             "description": "Brief description of what to learn.",
+             "estimatedTime": "2 hours",
+             "keyConcepts": ["concept1", "concept2"]
+          }
+        ]
+      }
+      
       Structure the path to specifically help with ${userProfile?.targetExam || 'general understanding'}.`,
       config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            topic: { type: Type.STRING },
-            steps: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  title: { type: Type.STRING },
-                  description: { type: Type.STRING },
-                  estimatedTime: { type: Type.STRING },
-                  keyConcepts: { type: Type.ARRAY, items: { type: Type.STRING } }
-                }
-              }
-            }
-          }
-        }
+        responseMimeType: "application/json"
+        // Removed responseSchema to prevent "non-empty OBJECT" errors and improve robustness
       }
     });
 
-    let text = response.text || "";
-    text = text.replace(/```json/g, '').replace(/```/g, '').trim();
-
-    return JSON.parse(text) as LearningPath;
+    return cleanAndParseJSON(response.text || "") as LearningPath;
   } catch (error: any) {
     console.error("Learning Path Error:", error);
     throw new Error(error.message || "Failed to generate learning path.");

@@ -4,9 +4,10 @@ import { MindMapNode } from '../types';
 
 interface MindMapViewerProps {
   data: MindMapNode | null;
+  isDarkMode: boolean;
 }
 
-const MindMapViewer: React.FC<MindMapViewerProps> = ({ data }) => {
+const MindMapViewer: React.FC<MindMapViewerProps> = ({ data, isDarkMode }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -47,7 +48,7 @@ const MindMapViewer: React.FC<MindMapViewerProps> = ({ data }) => {
         .y(d => d.x)
       )
       .attr("fill", "none")
-      .attr("stroke", "#cbd5e1")
+      .attr("stroke", isDarkMode ? "#475569" : "#cbd5e1")
       .attr("stroke-width", 2);
 
     // Nodes
@@ -61,7 +62,7 @@ const MindMapViewer: React.FC<MindMapViewerProps> = ({ data }) => {
     // Node Circles
     nodes.append("circle")
       .attr("r", 6)
-      .attr("fill", d => d.children ? "#4f46e5" : "#fff") // Primary color for parents, white for leaves
+      .attr("fill", d => d.children ? "#4f46e5" : (isDarkMode ? "#1e293b" : "#fff")) // Primary color for parents, white/dark for leaves
       .attr("stroke", "#4f46e5")
       .attr("stroke-width", 2);
 
@@ -73,9 +74,9 @@ const MindMapViewer: React.FC<MindMapViewerProps> = ({ data }) => {
       .text(d => d.data.name)
       .style("font-size", "14px")
       .style("font-family", "sans-serif")
-      .style("fill", "#1e293b")
+      .style("fill", isDarkMode ? "#e2e8f0" : "#1e293b")
       .clone(true).lower() // Outline for readability
-      .attr("stroke", "white")
+      .attr("stroke", isDarkMode ? "#0f172a" : "white")
       .attr("stroke-width", 3);
 
     // Zoom behavior
@@ -87,14 +88,14 @@ const MindMapViewer: React.FC<MindMapViewerProps> = ({ data }) => {
 
     d3.select(svgRef.current).call(zoom);
 
-  }, [data]);
+  }, [data, isDarkMode]);
 
-  if (!data) return <div className="text-gray-400 text-center mt-20">Generate a mind map to visualize concepts here.</div>;
+  if (!data) return <div className="text-gray-400 dark:text-slate-500 text-center mt-20">Generate a mind map to visualize concepts here.</div>;
 
   return (
-    <div ref={containerRef} className="w-full h-full bg-slate-50 overflow-hidden border border-slate-200 rounded-xl relative">
+    <div ref={containerRef} className="w-full h-full bg-slate-50 dark:bg-slate-900 overflow-hidden border border-slate-200 dark:border-slate-800 rounded-xl relative">
       <svg ref={svgRef} className="w-full h-full cursor-move"></svg>
-      <div className="absolute bottom-4 right-4 bg-white/80 backdrop-blur px-3 py-1 rounded text-xs text-slate-500 pointer-events-none">
+      <div className="absolute bottom-4 right-4 bg-white/80 dark:bg-slate-800/80 backdrop-blur px-3 py-1 rounded text-xs text-slate-500 dark:text-slate-400 pointer-events-none">
         Scroll to zoom • Drag to pan
       </div>
     </div>
